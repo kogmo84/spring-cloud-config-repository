@@ -1,0 +1,108 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  boot:
+#    admin:
+#      client:
+#        url: http://localhost:9090
+#      instance:
+#        prefer-ip: true
+  redis:
+    host: 10.10.102.196
+    port: 6379
+    database: 0
+    password:
+    timeout: 6000
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://test.test.com"
+            allow-credentials: true
+            allowedHeaders:
+              - x-requested-with
+              - authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - OPTIONS
+              - DELETE
+      routes:
+        - id: healthCheck
+          uri: http://localhost:30334/
+          predicates:
+            - Path=/healthCheck/**
+          filters:
+            - HealthCheckFilter
+        - id: resource
+          uri: http://localhost:30334
+          metadata:
+            serviceName: "resource"
+          predicates:
+            - Path=/resource/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/resource/, /resource/external/
+        - id: gds
+          uri: http://localhost:30334
+          metadata:
+            serviceName: "gds"
+          predicates:
+            - Path=/gds/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/gds/, /gds/external/
+        - id: resource2
+          uri: http://localhost:30334
+          metadata:
+            serviceName: "resource"
+          predicates:
+            - Path=/etoos/resource/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/resource/, /resource/external/
+        - id: gds2
+          uri: http://localhost:30334
+          metadata:
+            serviceName: "gds"
+          predicates:
+            - Path=/gds/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/gds/, /gds/external/
+        - id: eds-auth
+          uri: http://localhost:9990
+          metadata:
+            serviceName: "eds"
+          predicates:
+            - Path=/etoos/eds/v1.0/sdk-version
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/eds/, /eds/external/
+            - AuthorizationHeaderFilter
+        - id: eds
+          uri: http://localhost:9990
+          metadata:
+            serviceName: "eds"
+          predicates:
+            - Path=/etoos/eds/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/eds/, /eds/external/
+#            - AuthorizationHeaderFilter
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true

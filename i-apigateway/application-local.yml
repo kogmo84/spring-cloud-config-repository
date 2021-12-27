@@ -1,0 +1,62 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080
+      instance:
+        prefer-ip: true
+  redis:
+    host: 10.10.102.196
+    port: 6379
+    database: 0
+    password:
+    timeout: 6000
+  cloud:
+    gateway:
+      routes:
+        - id: healthCheck
+          uri: http://localhost:30334/
+          metadata:
+            serviceName: "healthCheck"
+          predicates:
+            - Path=/healthCheck/**
+          filters:
+            - HealthCheckFilter
+        - id: resource
+          uri: http://localhost:30334/
+          metadata:
+            serviceName: "resource"
+          predicates:
+            - Path=/resource/**
+            - Method=GET,POST,DELETE,PUT
+        - id: gds
+          uri: http://localhost:30334/
+          metadata:
+            serviceName: "gds"
+          predicates:
+            - Path=/gds/**
+            - Method=GET,POST,DELETE,PUT
+        - id: eds
+          uri: http://localhost:9990/
+          metadata:
+            serviceName: "eds"
+          predicates:
+            - Path=/eds/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/eds/, /eds/internal/
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true

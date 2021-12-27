@@ -1,0 +1,84 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  boot:
+    admin:
+      client:
+        url: http://platform-common-boot-admin-1525162385.ap-northeast-2.elb.amazonaws.com
+      instance:
+        prefer-ip: true
+  redis:
+    host: platform-dev-common.svru9h.clustercfg.apn2.cache.amazonaws.com
+    port: 6379
+    database: 0
+    password:
+    timeout: 6000
+  cloud:
+    gateway:
+      routes:
+        - id: healthCheck
+          uri: http://localhost:30334/
+          metadata:
+            serviceName: "healthCheck"
+          predicates:
+            - Path=/healthCheck/**
+          filters:
+            - HealthCheckFilter
+        - id: gds
+          uri: http://internal-platform-dev-application-alb-480685064.ap-northeast-2.elb.amazonaws.com
+          metadata:
+            serviceName: "gds"
+          predicates:
+            - Path=/etoos/gds/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/gds/, /gds/external/
+        - id: resource
+          uri: http://internal-platform-dev-application-alb-480685064.ap-northeast-2.elb.amazonaws.com
+          metadata:
+            serviceName: "resource"
+          predicates:
+            - Path=/etoos/resource/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/resource/, /resource/external/
+        - id: auth
+          uri: http://internal-platform-dev-application-alb-480685064.ap-northeast-2.elb.amazonaws.com
+          metadata:
+            serviceName: "auth"
+          predicates:
+            - Path=/etoos/auth/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/auth/, /auth/
+        - id: eds-auth
+          uri: http://internal-platform-dev-application-alb-480685064.ap-northeast-2.elb.amazonaws.com
+          metadata:
+            serviceName: "eds"
+          predicates:
+            - Path=/etoos/eds/v1.0/sdk-version
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/eds/, /eds/external/
+            - AuthorizationHeaderFilter
+        - id: eds
+          uri: http://internal-platform-dev-application-alb-480685064.ap-northeast-2.elb.amazonaws.com
+          metadata:
+            serviceName: "eds"
+          predicates:
+            - Path=/etoos/eds/**
+            - Method=GET,POST,DELETE,PUT
+          filters:
+            - RewritePath=/etoos/eds/, /eds/external/
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true

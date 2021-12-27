@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      default-filters:
+        - MaintenanceFilter
+        - LoggingFilter
+        - name: BlockCheckFilter
+          args:
+            enableBlockCheck: true
+
+server:
+  port: 8080

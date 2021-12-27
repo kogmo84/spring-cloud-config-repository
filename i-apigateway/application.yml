@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: i-apigateway
+  cloud:
+    gateway:
+      default-filters:
+        - MaintenanceFilter
+        - LoggingFilter
+
+server:
+  port: 8080
