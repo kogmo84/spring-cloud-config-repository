@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: eds
+  sleuth:
+    enabled: true
+  datasource:
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://10.10.102.196:3306/edsvc?autoReconnect=true&connectTimeout=3000&socketTimeout=4500&allowMultiQueries=true&retriesAllDown=3
+      username: root
+      password: edsmysql
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      connection-timeout: 5000
+      validation-timeout: 5000
+      keepalive-time: 480000
+      max-lifetime: 240000
+      pool-name: SpringBootHikariCP
+  redis:
+    host: 10.10.102.196
+    port: 6379
+    database: 0
+    password:
+    timeout: 2000
+  jackson:
+    default-property-inclusion: NON_NULL
+    serialization:
+      indent-output: false
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-ignored-properties: false
+      fail-on-unknown-properties: false
+    property-naming-strategy: SNAKE_CASE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+eds:
+  rest-config:
+    read-time-out: 5000
+    connection-request-timeout: 10000
+    connect-time-out: 5000
+    max-total-pool-count: 600
+    default-max-count-per-route: 200
