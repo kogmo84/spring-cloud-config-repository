@@ -9,7 +9,7 @@ spring:
 #      instance:
 #        prefer-ip: true
   redis:
-    host: 10.10.102.190
+    host: 10.10.102.196
     port: 6379
     database: 0
     password:
