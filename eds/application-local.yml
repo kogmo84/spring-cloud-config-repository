@@ -1,0 +1,28 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://10.10.102.196:3306/edsdb?autoReconnect=true&connectTimeout=3000&socketTimeout=4500&allowMultiQueries=true&retriesAllDown=3
+      username: root
+      password: edsmysql
+  redis:
+    host: 10.10.102.196
+    port: 6379
+    database: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+server:
+  port: 9990
+
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: INFO
+    com.zaxxer.hikari: INFO
